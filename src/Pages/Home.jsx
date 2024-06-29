@@ -5,7 +5,9 @@ import Footer from "../Components/footer";
 import Hero from "../Components/hero";
 import NewReleases from "../Components/newreleased";
 import Offers from "../Components/offers";
+import AboutUs from "../Components/aboutus";
 function Home() {
+
     const res = localStorage.getItem("cartBooks");
     const cartBooks = JSON.parse(res) || [];
 
@@ -17,6 +19,7 @@ function Home() {
             <Hero />
             <Offers />
             <NewReleases />
+            <AboutUs />
             <Footer />
 
         </div>

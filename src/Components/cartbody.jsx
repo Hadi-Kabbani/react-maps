@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function CartBody({ cartHandler }) {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ function CartBody({ cartHandler }) {
                 <div className="grid grid-cols-1 gap-4 min-h-56">
                     <h1 className="text-primary font-bold text-2xl text-center p-4">Your Selected Books</h1>
                     {cart.map((item) => (
-                        <div className="flex flex-row items-center justify-around bg-gray-100 px-2 min-h-27 max-h-32" key={item.id}>
+                        <div className="flex flex-row items-center justify-around bg-gray-100 px-2 min-h-27 max-h-32 overflow-hidden" key={item.id}>
                             <div className="h-24 w-24 min-h-14 min-w-14  rounded-full overflow-hidden items-center justify-center">
                                 <img
                                     className="cursor-pointer w-full h-full"
@@ -31,8 +31,8 @@ function CartBody({ cartHandler }) {
                                     onClick={() => imageHandler(item.id)}
                                 />
                             </div>
-                            <p className="font-bold text-primary w-1/6 text-center p-2 h-full flex items-center justify-around">{item.title}</p>
-                            <p className="font-bold w-1/6 text-center p-2 h-full flex items-center justify-around">{item.author}</p>
+                            <p className="font-bold text-primary w-1/6 text-center p-2 h-full flex items-center justify-around ">{item.title}</p>
+                            <p className="font-bold w-1/6 text-center p-2 h-full flex items-center justify-around ">{item.author}</p>
                             <p className="font-bold text-secondary w-1/6 text-center p-2">{item.price.toFixed(2)} $</p>
                             <button className="underline underline-offset-4 mx-2 text-primary hover:text-secondary font-bold"
                                 onClick={() => imageHandler(item.id)}
@@ -64,6 +64,7 @@ function CartBody({ cartHandler }) {
                     <p className="text-center text-lg text-gray-600 mt-4">
                         Start adding books to your cart and explore our collection!
                     </p>
+                    <Link className="text-center text-lg text-gold mt-4" to={"/books"}>Go to Books</Link>
                 </div>
             )}
         </div>

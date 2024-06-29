@@ -57,7 +57,7 @@ function Hero() {
                     {images.map((_, index) => (
                         <div
                             key={index}
-                            className={`slider_dot relative w-3 h-3 sm:w-4 sm:h-4 bg-primary rounded-full hover:bg-secondary transition-all ${index === currentSlide ? 'bg-secondary' : ''}`}
+                            className={`slider_dot cursor-pointer relative w-3 h-3 sm:w-4 sm:h-4 bg-primary rounded-full hover:bg-secondary transition-all ${index === currentSlide ? 'bg-secondary' : ''}`}
                             onClick={() => handleDotClick(index)}
                         ></div>
                     ))}

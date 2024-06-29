@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import Search from "../Components/search";
 import { Link, useNavigate } from "react-router-dom";
 
-function HeaderMiddle({ cartBooksFromWishList, cartFromCart, cartBooks, cartFromBooks, cartFromHome }) {
+function HeaderMiddle({ cartFromNewReleased, cartFromContact, cartFromAbout, cartBooksFromWishList, cartFromCart, cartBooks, cartFromBooks, cartFromHome }) {
     const navigate = useNavigate();
     const [cart, setCart] = useState([]);
 
@@ -17,6 +18,7 @@ function HeaderMiddle({ cartBooksFromWishList, cartFromCart, cartBooks, cartFrom
                 console.error("Error parsing cartBooks from localStorage", e);
             }
         }
+
     }, []);
 
     useEffect(() => {
@@ -28,11 +30,30 @@ function HeaderMiddle({ cartBooksFromWishList, cartFromCart, cartBooks, cartFrom
             setCart(cartBooks);
         }
     }, [cartBooks]);
+
+    useEffect(() => {
+        if (Array.isArray(cartFromNewReleased)) {
+            setCart(cartFromNewReleased);
+        }
+    }, [cartFromNewReleased]);
+
+    useEffect(() => {
+        if (Array.isArray(cartFromContact)) {
+            setCart(cartFromContact);
+        }
+    }, [cartFromContact]);
+
     useEffect(() => {
         if (Array.isArray(cartFromHome)) {
             setCart(cartFromHome);
         }
     }, [cartFromHome]);
+
+    useEffect(() => {
+        if (Array.isArray(cartFromAbout)) {
+            setCart(cartFromAbout);
+        }
+    }, [cartFromAbout]);
 
     useEffect(() => {
         if (Array.isArray(cartFromBooks)) {
@@ -72,14 +93,11 @@ function HeaderMiddle({ cartBooksFromWishList, cartFromCart, cartBooks, cartFrom
                 </div>
             </div>
             <div className="w-4/12 relative">
-                <input className="bg-slate-200 border-[#393280] outline-[#393280] focus:outline-[#393280] w-full p-2 rounded-xl" type="text" placeholder="Search" />
-                <svg className="absolute top-2 right-3" xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
-                </svg>
+                <Search />
             </div>
             <ul className="flex flex-col lg:flex-row items-center justify-center lg:justify-between lg:w-fit px-2">
                 <li className="mb-2 lg:mr-4 text-sm md:text-lg">
-                    <Link className="middle_header_icons" to="/login">
+                    <Link className="middle_header_icons" to="/account">
                         <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM6.02332 15.4163C7.49083 17.6069 9.69511 19 12.1597 19C14.6243 19 16.8286 17.6069 18.2961 15.4163C16.6885 13.9172 14.5312 13 12.1597 13C9.78821 13 7.63095 13.9172 6.02332 15.4163ZM12 11C13.6569 11 15 9.65685 15 8C15 6.34315 13.6569 5 12 5C10.3431 5 9 6.34315 9 8C9 9.65685 10.3431 11 12 11Z"></path>
                         </svg>

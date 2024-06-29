@@ -8,6 +8,7 @@ import Books from './Pages/Books';
 import WishList from './Pages/WishList';
 import Cart from './Pages/Cart';
 import CheckOut from './Pages/checkout';
+import Account from './Pages/Account';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import NewReleased from './Pages/newreleased';
 
@@ -36,6 +37,11 @@ const router = createBrowserRouter([
     path: "/contact",
     element: <Contact />
   },
+  {
+    path: "/account",
+    element: <Account />
+  }
+  ,
   {
     path: "/wishlist",
     element: <WishList />

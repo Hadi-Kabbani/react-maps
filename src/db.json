@@ -1,0 +1,35 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "john.doe@example.com",
+      "password": "Password1!"
+    },
+    {
+      "id": "2",
+      "email": "jane.smith@example.com",
+      "password": "Password2!"
+    },
+    {
+      "id": "3",
+      "email": "michael.johnson@example.com",
+      "password": "Password3!",
+      "photo": "michael_johnson.jpg"
+    },
+    {
+      "id": "684b",
+      "email": "hadikbb76917223@gmail.com",
+      "password": "Hadikbb76917223!"
+    },
+    {
+      "id": "740b",
+      "email": "hadikbb12@gmail.com",
+      "password": "Hadikbb76917223!"
+    },
+    {
+      "id": "db30",
+      "email": "hadikbb@gmail.com",
+      "password": "Hadikbb2002!"
+    }
+  ]
+}

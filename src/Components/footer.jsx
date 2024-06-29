@@ -46,7 +46,7 @@ function Footer() {
                 <div className="w-full flex flex-col justify-around items-center md:px-3">
                     <h1 className="text-2xl text-secondary font-bold text-center my-5">Bussiness Links</h1>
                     <nav className='w-full container mx-auto flex justify-center items-center my-5'>
-                        <ul className='flex justify-around w-full'>
+                        <ul className='flex justify-around flex-wrap items-center w-full'>
                             <li className='text-white text-1xl hover:text-secondary font-bold transition-all p-1'>
                                 <NavLink to={"/"}>Home</NavLink>
                             </li>
@@ -58,6 +58,9 @@ function Footer() {
                             </li>
                             <li className='text-white text-1xl hover:text-secondary font-bold transition-all p-1 '>
                                 <NavLink to={"/Books"}>Books</NavLink>
+                            </li>
+                            <li className='text-white text-1xl hover:text-secondary font-bold transition-all p-1 '>
+                                <NavLink to={"/newreleased"}>New Released</NavLink>
                             </li>
                         </ul>
                     </nav>

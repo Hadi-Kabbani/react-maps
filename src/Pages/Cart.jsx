@@ -10,6 +10,7 @@ function Cart() {
     function cartHandler(books) {
         setCart([...books]);
     }
+    
     return (
         <div className="Cart container mx-auto">
             <TopBar />

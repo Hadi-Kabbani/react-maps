@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function WishListBody({ cart, removeFromCart, getWishListNumber }) {
     const navigate = useNavigate();
@@ -48,7 +48,7 @@ function WishListBody({ cart, removeFromCart, getWishListNumber }) {
                                     onClick={() => imageHandler(item.id)}
                                 />
                             </div>
-                            <p className="font-bold text-primary w-1/6 text-center p-2 h-full flex items-center justify-around">{item.title}</p>
+                            <p className="font-bold text-primary w-1/6 text-center p-2 h-full flex items-center justify-around overflow-hidden">{item.title}</p>
                             <p className="font-bold w-1/6 text-center p-2 h-full flex items-center justify-around">{item.author}</p>
                             <p className="font-bold text-secondary w-1/6 text-center p-2">{item.publication_year}</p>
                             <button className="underline underline-offset-4 mx-2 text-primary hover:text-secondary font-bold"
@@ -76,6 +76,7 @@ function WishListBody({ cart, removeFromCart, getWishListNumber }) {
                     <p className="text-center text-lg text-gray-600 mt-4">
                         Start adding books to your wish list and explore our collection!
                     </p>
+                    <Link className="text-center text-lg text-gold mt-4" to={"/books"}>Go to Books</Link>
                 </div>
             )}
         </div>

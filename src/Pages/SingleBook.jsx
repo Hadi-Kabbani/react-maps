@@ -10,6 +10,7 @@ function SingleBook() {
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isLiked, setIsLiked] = useState(false);
+
     const [cartBooks, setCartBooks] = useState(() => {
         const savedCart = localStorage.getItem("cartBooks");
         return savedCart ? JSON.parse(savedCart) : [];
@@ -25,8 +26,50 @@ function SingleBook() {
     }, [wishlist]);
 
     useEffect(() => {
-        setIsLiked(wishlist.some(wishlistBook => wishlistBook.id === parseInt(id)));
+        setIsLiked(wishlist.some(wishlistBook => wishlistBook.id === id));
     }, [id, wishlist]);
+
+    useEffect(() => {
+        localStorage.setItem("cartBooks", JSON.stringify(cartBooks));
+    }, [cartBooks]);
+
+    useEffect(() => {
+        const fetchBook = async () => {
+            try {
+                const response = await fetch(`https://www.googleapis.com/books/v1/volumes/${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch book');
+                }
+                const data = await response.json();
+                const fullDescription = data.volumeInfo.description || 'No Description';
+                const firstSentence = fullDescription.split('. ')[0] + '.';
+                const bookData = {
+                    id: data.id,
+                    title: data.volumeInfo.title,
+                    author: data.volumeInfo.authors?.join(', ') || 'Unknown',
+                    publication_year: data.volumeInfo.publishedDate?.substring(0, 4) || 2000,
+                    price: data.saleInfo.retailPrice?.amount || 19.99,
+                    cover_image: data.volumeInfo.imageLinks?.thumbnail || 'No Image',
+                    genre: data.volumeInfo.categories?.[0] || 'Unknown',  // Extract only the first genre
+                    description: firstSentence
+                };
+
+                const discountBooks = JSON.parse(localStorage.getItem("discountBooks")) || [];
+                const discountedBook = discountBooks.find(discountBook => discountBook.id === id);
+                if (discountedBook) {
+                    bookData.price = discountedBook.price;
+                }
+
+                setBook(bookData);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchBook();
+    }, [id]);
 
     const handleAddToCart = (book) => {
         setCartBooks(prevBooks => {
@@ -64,40 +107,6 @@ function SingleBook() {
         window.location.href = whatsappURL;
     };
 
-    useEffect(() => {
-        localStorage.setItem("cartBooks", JSON.stringify(cartBooks));
-    }, [cartBooks]);
-
-    useEffect(() => {
-        fetch(`https://freetestapi.com/api/v1/books`)
-            .then((response) => response.json())
-            .then((data) => {
-                const booksWithData = data.map(book => ({
-                    ...book,
-                    price: 19.99
-                }));
-                const foundBook = booksWithData.find((item) => item.id === parseInt(id));
-
-                // Check if the book is in discountBooks
-                const discountBooks = JSON.parse(localStorage.getItem("discountBooks")) || [];
-                const discountedBook = discountBooks.find(discountBook => discountBook.id === parseInt(id));
-                if (discountedBook) {
-                    foundBook.price = discountedBook.price;
-                }
-
-                if (foundBook) {
-                    setBook(foundBook);
-                } else {
-                    console.error('Book not found');
-                }
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-                setLoading(false);
-            });
-    }, [id]);
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -113,7 +122,7 @@ function SingleBook() {
         return (
             <div className="flex items-center justify-center h-screen">
                 <div className="text-center">
-                    <p className="text-2xl font-semibold text-red-500 mb-4">Book not found</p>
+                    <p className="text-2xl font-semibold text-black mb-4">Book not found</p>
                     <p className="text-lg text-gray-600">Sorry, the book you are looking for does not exist.</p>
                 </div>
             </div>
@@ -125,22 +134,26 @@ function SingleBook() {
             <TopBar />
             <HeaderMiddle cartBooks={cartBooks} />
             <SingleBookHeader title={book.title} id={book.id} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 justify-between gap-4 mt-4 items-center p-3" key={book.id}>
+            <div className="shadow-md rounded-lg bg-neutral-100 grid grid-cols-1 sm:grid-cols-2 justify-between gap-4 mt-4 items-center p-3" key={book.id}>
                 <div className="w-full flex items-center justify-center">
-                    <div className="w-60 md:w-72">
-                        <img className='w-full' src={book.cover_image} alt={book.title} />
+                    <div className="flex flex-col items-center justify-between shadow-lg p-4 bg-white rounded-lg group hover:bg-gray-100 transition duration-300">
+                        <img className="h-96 w-full object-cover rounded-lg" src={book.cover_image} alt={book.title} />
                     </div>
                 </div>
                 <div>
                     <h1 className="text-2xl md:text-4xl text-primary font-bold my-3 border-b-4 border-primary pb-3 w-fit">{book.title}</h1>
-                    <p className="text-lg md:text-2xl font-bold my-6 text-secondary"><span className="text-sky-400">Author:</span> {book.author}</p>
-                    <p className="text-lg md:text-2xl text-secondary font-bold my-6"><span className="text-sky-400">Publication year:</span> {book.publication_year}</p>
-                    <p className="text-lg md:text-2xl text-secondary font-bold my-6"><span className="text-sky-400">Price:</span> {book.price.toFixed(2)} $</p>
+                    <p className="text-lg md:text-2xl font-bold my-6 text-slate-500"><span className="text-paragraph">{book.author.length > 1 ? "Authors:" : "Author:"}</span> {book.author}</p>
+                    <p className="text-lg md:text-2xl text-slate-500 font-bold my-6"><span className="text-paragraph">Publication year:</span> {book.publication_year}</p>
+                    <p className="text-lg md:text-2xl text-slate-500 font-bold my-6"><span className="text-paragraph">Price:</span> {book.price.toFixed(2)} $</p>
                     <div className='flex gap-4 my-4 items-center'>
-                        <p className='text-lg md:text-2xl font-bold text-sky-400'>Genre:</p>
-                        <p className="text-base md:text-lg text-red-500">{book.genre.join(", ")}</p>
+                        <p className='text-lg md:text-2xl font-bold text-paragraph'>Genre:</p>
+                        {Array.isArray(book.genre) ? (
+                            <p className="text-base md:text-lg text-black">{book.genre.join(', ')}</p>
+                        ) : (
+                            <p className="text-base md:text-lg text-black">{book.genre}</p>
+                        )}
                     </div>
-                    <p className="w-fit text-base md:text-lg text-paragraph">{book.description}</p>
+                    <p className="w-fit text-base md:text-lg text-paragraph h-30 overflow-auto">{book.description}</p>
                     <div className='flex flex-row gap-2'>
                         <button className="btn" onClick={handleBuyClick}>Buy</button>
                         <button className="btn" onClick={() => handleAddToCart(book)}>Add to cart</button>

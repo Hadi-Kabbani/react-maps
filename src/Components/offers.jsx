@@ -10,24 +10,40 @@ function Offers() {
         minutes: 0,
         seconds: 0
     });
+    const [offerEnded, setOfferEnded] = useState(false);
     const slideInterval = 6000;
-
-    localStorage.setItem('discountBooks', JSON.stringify(books));
+    const offerDurationDays = 10; // Configurable offer duration in days
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await fetch('https://freetestapi.com/api/v1/books');
+                const response = await fetch('https://www.googleapis.com/books/v1/volumes?q=search+terms&startIndex=0&maxResults=40');
                 if (!response.ok) {
                     throw new Error('Failed to fetch books');
                 }
                 const data = await response.json();
-                const booksBelow1820 = data.filter(book => parseInt(book.publication_year) <= 1820);
-                const booksWithDiscount = booksBelow1820.map(book => ({
-                    ...book,
-                    price: !isNaN(parseInt(book.price)) ? parseInt(book.price) * 0.5 : 19.99 * 0.5
-                }));
-                setBooks(booksWithDiscount);
+                const booksWithData = data.items
+                    .filter(book => {
+                        const year = book.volumeInfo.publishedDate?.substring(0, 4) || 2000;
+                        return year && parseInt(year) < 2008;
+                    })
+                    .map(book => {
+                        const fullDescription = book.volumeInfo.description || 'No Description';
+                        const firstSentence = fullDescription.split('. ')[0] + '.';
+                        return {
+                            id: book.id,
+                            title: book.volumeInfo.title,
+                            author: book.volumeInfo.authors ? book.volumeInfo.authors[0] : 'Unknown',
+                            publication_year: book.volumeInfo.publishedDate?.substring(0, 4) || 2000,
+                            original_price: book.saleInfo.retailPrice?.amount || 19.99,
+                            price: book.saleInfo.retailPrice?.amount ? (book.saleInfo.retailPrice.amount * 0.5) : 19.99 * 0.5,
+                            cover_image: book.volumeInfo.imageLinks?.thumbnail || 'No Image',
+                            genre: book.volumeInfo.categories || ['Unknown'],
+                            description: firstSentence
+                        };
+                    });
+                setBooks(booksWithData);
+                localStorage.setItem('discountBooks', JSON.stringify(booksWithData));
             } catch (error) {
                 console.error('Error fetching books:', error);
             }
@@ -41,11 +57,19 @@ function Offers() {
     }, [currentSlide, books.length]);
 
     useEffect(() => {
-        const targetDate = new Date().getTime() + 5 * 24 * 60 * 60 * 1000;
+        // Specify your target end date
+        const targetEndDate = new Date('2024-07-24T00:00:00').getTime(); // May 24, 2026 00:00:00 UTC
 
         const updateCountdown = () => {
             const now = new Date().getTime();
-            const difference = targetDate - now;
+            const difference = targetEndDate - now;
+
+            if (difference <= 0) {
+                setOfferEnded(true);
+                setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                clearInterval(countdownInterval);
+                return;
+            }
 
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -70,10 +94,10 @@ function Offers() {
     return (
         <section className="offer py-7">
             <div className="container px-5 mx-auto">
-                <div className="flex  flex-col-reverse sm:flex sm:flex-row justify-between sm:grid-cols-1 md:grid-cols-2 bg-red-50 p-5 rounded-lg">
+                <div className="flex flex-col-reverse sm:flex sm:flex-row justify-between sm:grid-cols-1 md:grid-cols-2 bg_linear p-5 rounded-lg">
                     <div className="flex flex-col items justify-center p-0">
-                        <h1 className="text-3xl lg:text-4xl font-bold text-primary mb-3 lg:mb-5">
-                            These books are 50% off now! Don't miss such a deal!
+                        <h1 className="text-3xl lg:text-4xl font-bold text-primary mb-3 lg:mb-5 mt-3">
+                            {offerEnded ? "The offer has ended." : "These books are 50% off now! Don't miss such a deal!"}
                         </h1>
                         {books.length > 0 && (
                             <>
@@ -109,7 +133,7 @@ function Offers() {
                                     {books.map((_, index) => (
                                         <div
                                             key={index}
-                                            className={`slider_dot relative w-4 h-4 sm:w-4 sm:h-4 bg-primary rounded-full hover:bg-secondary transition-all ${index === currentSlide ? 'bg-secondary' : ''}`}
+                                            className={`slider_dot relative w-4 h-4 sm:w-4 sm:h-4 bg-primary rounded-full hover:bg-secondary cursor-pointer transition-all ${index === currentSlide ? 'bg-secondary' : ''}`}
                                             onClick={() => handleDotClick(index)}
                                         ></div>
                                     ))}
@@ -117,11 +141,11 @@ function Offers() {
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div className="w-full">
                         {books.length > 0 && (
                             <div className='flex items-end justify-center'>
-                                <Link className="flex items-end justify-center p-6 w-full max-w-96 overflow-hidden" to={`/books/${books[currentSlide].id}`} >
-                                    <img className="h-full w-full object-cover " src={books[currentSlide].cover_image} alt={books[currentSlide].title} />
+                                <Link className="flex flex-col items-center justify-between shadow-lg p-4 bg-white rounded-lg group hover:bg-gray-100 transition duration-300" to={`/books/${books[currentSlide].id}`} >
+                                    <img className="h-96 w-full object-cover rounded-lg" src={books[currentSlide].cover_image} alt={books[currentSlide].title} />
                                 </Link>
                             </div>
                         )}

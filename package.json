@@ -10,7 +10,10 @@
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.23.1",
+    "react-hook-form": "^7.52.0",
+    "react-icons": "^5.2.1",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -20,7 +23,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "TailWindBuild": "npx tailwindcss -i ./src/index.css -o ./src/App.css",
-    "TailWindWatch": "npx tailwindcss -i ./src/index.css -o ./src/App.css --watch"
+    "TailWindWatch": "npx tailwindcss -i ./src/index.css -o ./src/App.css --watch",
+    "JSONServer": "json-server --watch src/db.json --port 8000"
   },
   "eslintConfig": {
     "extends": [
